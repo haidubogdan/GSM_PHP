@@ -1,0 +1,575 @@
+IF volum_3d<>1 THEN
+    END
+ENDIF
+define material "glass" 0,
+0.4, 0.7, 0.8, !Surface RGB
+            0.95, 0.70, !ambient, diffuse
+            0.50, 0.60,!specular,ADDparent
+            50, !shining
+            0, !ADDparency attenuation
+            1, 1, 1,!Specular RGB
+            0.0, 0.0, 0.0, !Emission RGB
+            0.0 !Emission attenuation
+define material "alu" 0,
+1, 0.95, 0.75, !Surface RGB
+            0.80, 0.10, !ambient, diffuse
+            0.70, 0.0,!specular,ADDparent
+            49, !shining
+            0, !ADDparency attenuation
+            1, 1, 1,!Specular RGB
+            0.0, 0.0, 0.0, !Emission RGB
+            0.0 !Emission attenuation
+define material "lemn" 3,
+0.9, 0.7, 0.4 
+MULZ 1-2*(1-WIDO_REVEAL_SIDE)
+    rotx -90
+        ADD -a/2,WALL_THICKNESS/2,0
+            MULY -(1-2*(1-WIDO_REVEAL_SIDE))
+                ADDY y_rama/2
+                    GOSUB "handles" !!3D HANDLES
+                    MATERIAL gs_frame_mat
+                    GOSUB "rame"
+                    ADDZ h1_door
+                        mulz -1
+                            !GOSUB "balama rama"
+                        del 1
+                    del 1
+                    muly -1
+                        add x_rama-offset_pliere,0,x_profil_usa+sill*(x_rama - 0.02)
+                            GOSUB "pliere"
+                        del 1
+                    del 1
+                del 1
+            del 1
+        del 1
+    del 1
+del 1
+END
+"handles":
+ADDX x_rama
+    unID=0
+    unID=unID+1
+    hotspot 0,0,0,unID,l1_pliat, 1+128
+    unID=unID+1
+    hotspot l1_pliat,0,0,unID,l1_pliat, 2
+    unID=unID+1
+    hotspot -1,0,0,unID,l1_pliat, 3
+del 1
+RETURN
+
+"balama rama":
+h_balama=0.05
+ADD 0.03 , 0.003 , 0.01
+    ROTZ 45
+        ADDX 0.012
+            CYLIND h_balama, 0.009 
+        del 1
+        ADD 0.012,-0.006/2,0
+            MULX -1
+                BRICK 0.04, 0.012, h_balama 
+            del 1
+        del 1
+        ADD 0.012,0,h_balama/2-0.03/2
+            ROTZ u_diag-90
+                ADDy -0.006/2
+                    BRICK 0.04, 0.012, 0.03 
+                del 1
+            del 1
+        del 1
+    del 1
+del 1
+RETURN
+
+"balama usa impar1":
+IF kk>1 AND kk<=n1 THEN
+    GOSUB "balama usa"
+    ADDz h1_door-x_profil_usa
+        MULz -1
+            GOSUB "balama usa"
+        del 1
+    del 1
+ENDIF
+RETURN
+
+"balama usa impar2":
+IF kk<n1 THEN
+    ADDx dx1_usa
+        MULy -1
+            GOSUB "balama usa2"
+            ADDz h1_door-x_profil_usa
+                MULz -1
+                    GOSUB "balama usa2"
+                del 1
+            del 1
+        del 1
+    del 1
+ENDIF
+RETURN
+
+"balama usa":
+h_balama=0.05
+ADD 0 , -0.011, -x_profil_usa+0.01
+    CYLIND h_balama, 0.009 
+    ROTZ 55-u_diag
+        ADDy 0.003
+            MULy -1
+                BRICK 0.023, 0.012, h_balama 
+            del 1
+        del 1
+    del 1
+    ADDz h_balama/2-0.03/2
+        MULx -1
+            ROTZ 55-u_diag
+                ADDy 0.003
+                    MULy -1
+                        BRICK 0.023, 0.012, h_balama 
+                    del 1
+                del 1
+            del 1
+        del 1
+    del 1
+del 1
+RETURN
+
+"balama usa2":
+h_balama=0.05
+ADD -0.018 * sin(u_diag)/2, -y_profil_usa - 0.011 ,-x_profil_usa + 0.01
+    CYLIND h_balama, 0.009 
+    ADDz h_balama/2-0.03/2
+        ROTZ (-u_diag*2-2*u_corectie-u_diff)*rot_panou+55
+            ADDy 0.003
+                MULy -1
+                    BRICK 0.03, 0.012, h_balama 
+                del 1
+            del 1
+        del 1
+    del 1
+    MULx -1
+        ROTZ 55
+            ADDy 0.003
+                MULy -1
+                    BRICK 0.021, 0.012, h_balama 
+                del 1
+            del 1
+        del 1
+    del 1
+del 1
+RETURN
+
+"pliere":
+l_cadru = x_panou1
+offsetx_balama = 0
+offsety_balama = 0
+kk = 0  !COUNT
+FOR ll = 0 TO l1_pliat-0.03 STEP dx1_pliat
+    kk = kk+1
+    mm = CEIL ( FRA ( kk / 2 ) )  !MIRROR CHECKING
+    ADDx ll
+        IF mm THEN
+            GOSUB "expresie usa nivel impar"
+        ENDIF
+        IF NOT ( mm ) THEN
+            GOSUB "expresie usa nivel par"
+        ENDIF
+    del 1
+NEXT ll
+RETURN
+
+"expresie usa nivel impar":
+GOSUB "balama usa impar1"
+ADDx 0.018*sin(u_diag)/2
+    rotz (-u_diag)*rot_panou
+        rotz (-u_corectie-u_diff*sin(u_diag))*rot_panou
+            GOSUB "door1"
+            GOSUB "balama usa impar2"
+        del 1
+    del 1
+del 1
+RETURN
+
+"expresie usa nivel par":
+ADDx dx1_pliat-0.018*sin(u_diag)/2
+    mulx -1
+        rotz (-u_diag)*rot_panou
+            rotz (-u_corectie-u_diff*sin(u_diag))*rot_panou
+                GOSUB "door2"
+            del 1
+        del 1
+    del 1
+del 1
+RETURN
+
+"rame":
+dim tip_prag[]
+tip_prag[1]="contur profil Uu"
+tip_prag[2]="contur profil Uu"
+tip_prag[3]="contur profil Uu"
+rama_stanga="contur profil Uu"
+rama_dreapta="contur profil Uu"
+rama_sus="contur profil Uu"
+prag=tip_prag[mm]
+l_prism=y_rama  !profunzime rama
+y_prism=x_rama  !latime rama
+y_prism1=x_rama-0.03
+g_profil=0.002
+g_prism=h_door
+gx_mij=0.045
+gy_mij=0.015
+g_prism=h_door
+h_offset_rama=h_door
+GOSUB "rama stanga"
+g_prism=x_door
+GOSUB "rama sus"
+g_prism=h_door
+GOSUB "rama dreapta"
+IF sill=1 THEN
+    g_prism=x_door
+    GOSUB "prag"
+ENDIF
+RETURN
+
+"rama stanga":
+Addz g_prism
+    ROTy 45
+        cutplane 0
+    del 1
+del 1
+ROTz -90
+    GOSUB rama_stanga !!contur rama_stanga
+    prism_ nsp/3,g_prism,get(nsp)
+del 1
+cutend
+RETURN
+
+"rama dreapta":
+Addx x_door
+    mulx -1
+        GOSUB "rama stanga"
+    del 1
+del 1
+RETURN
+
+"rama sus":
+Addz h_offset_rama
+    ROTy 45
+        cutplane 180
+    del 1
+    ADDX g_prism
+        mulx -1
+            ROTy 45
+                cutplane 180
+            del 1
+        del 1
+    del 1
+    ROTy 90
+        ROTz -90
+            GOSUB rama_sus !!contur rama_sus
+            prism_ nsp/3,g_prism,get(nsp)
+        del 1
+    del 1
+del 1
+cutend
+cutend
+RETURN
+
+"prag":
+ROTy -45
+    cutplane 0
+del 1
+ADDX g_prism
+    mulx -1
+        ROTy -45
+            cutplane 0
+        del 1
+    del 1
+del 1
+muly -1
+    ROTy 90
+        ROTz 90
+            GOSUB prag !!contur prag
+            prism_ nsp/3,g_prism,get(nsp)
+        del 1
+    del 1
+del 1
+cutend
+cutend
+RETURN
+
+"door":
+l1_prism=-0.4
+l2_prism=0.3
+x_r_door=0.1
+g_door=0.022
+y1_prism=0.2
+y2_prism=0.1
+l_prism=x_profil_usa
+g_profil=0.002
+y_prism=y_profil_usa
+h_cadru=h1_door
+offh1=0.03
+gx_mij=0.012
+gy_mij=0.015
+gx2_mij=0.008
+gy2_mij=0.022
+MATERIAL gs_frame_mat
+ADDy g_usa/2
+    GOSUB "cadru usa"
+    x_glas=l_usa-2*x_profil_usa
+    h_glas=h_cadru-x_profil_usa+0.03
+    g_geam=0.003
+    GOSUB "geam"
+del 1
+IF kk=n1 THEN
+    ADD dx1_usa,0,offh_handle
+        MULX -1
+            GOSUB "handle"
+        del 1
+    del 1
+ENDIF
+RETURN
+
+"door1":
+l_usa = l_cadru
+tip_profil="profil usa5 t"
+tip_profil2="profil usa6 t"
+offset_profil2=0
+IF kk=n1 THEN
+    offset_profil2=0.04
+    l_usa = l_cadru - offset_profil2-0.013
+    tip_profil2="profil usa7 t"
+ENDIF
+ADDy y_profil_usa
+    MULy -1
+        GOSUB "door"
+    del 1
+del 1
+RETURN
+
+"door2":
+l_usa = l_cadru
+tip_profil="profil usa5 t"
+tip_profil2="profil usa6 t"
+offset_profil2=0
+ADDx x_panou1
+    MULX -1
+        IF kk=n1 THEN
+            offset_profil2=0.04
+            l_usa = l_cadru - offset_profil2-0.013
+            tip_profil2="profil usa7 t"
+        ENDIF
+        ADDy y_profil_usa
+            MULy -1
+                GOSUB "door"
+            del 1
+        del 1
+    del 1
+del 1
+RETURN
+
+"geam":
+MATERIAL mat_geam
+ADD x_profil_usa-0.015,g_geam/2-0.0185,-0.03/2
+    BRICK x_glas+0.03, g_geam, h_glas 
+    ADDy 0.016
+        MULy -1
+            BRICK x_glas+0.03, g_geam, h_glas 
+        del 1
+    del 1
+del 1
+MATERIAL gs_frame_mat
+RETURN
+
+"cadru usa":
+g_prism=h_cadru
+ADDx y_prism
+    ROTZ 90
+        GOSUB tip_profil
+        n = nsp/3
+        PUT 0,-l_usa+2*y_prism,h_cadru/2-y_prism,0,
+        0,-l_usa+2*y_prism,h_cadru-y_prism,0,
+        0,0,h_cadru-y_prism,0,
+        0,0,0,0,
+        0,-l_usa+2*y_prism,0,0,
+        0,-l_usa+2*y_prism,h_cadru/2-y_prism,0
+        
+        m = ( nsp - n * 3 ) / 4 
+        TUBE n , m , 1 + 2+16+32 , GET ( n * 3 ) , GET ( m * 4 )
+
+        y_prism=y_profil_usa+offset_profil2
+        rama_panou_stanga=tip_profil2
+        h_prism=h_cadru+y_profil_usa
+        ADD 0,-l_usa+2*y_profil_usa,-y_profil_usa
+            MULY -1
+                GOSUB "rama stanga panou"
+            del 1
+        del 1
+    del 1
+del 1
+RETURN
+
+"rama stanga panou":
+ADDY y_profil_usa
+    ROTz -90
+        ROTy -45
+            cutplane 180
+        del 1
+        ADDZ h_prism
+            ROTy 45
+                cutplane 0
+            del 1
+        del 1
+    del 1
+del 1
+GOSUB rama_panou_stanga !!contur rama_stanga
+prism_ nsp/3,h_prism,get(nsp)
+cutend
+cutend
+RETURN
+
+"contur profil Uu":
+PUT 0,0,15,
+l_prism,0,15,
+l_prism,y_prism1-g_profil,15,
+l_prism+0.01,y_prism1-g_profil,15,
+l_prism+0.01,y_prism,15,
+l_prism,y_prism,15,
+l_prism,y_prism-g_profil,15,
+l_prism+0.01-g_profil,y_prism-g_profil,15,
+l_prism+0.01-g_profil,y_prism1,15,
+l_prism/2+gx_mij/2,y_prism1,15,
+l_prism/2+gx_mij/2,y_prism1+gy_mij,15,
+l_prism/2-gx_mij/2,y_prism1+gy_mij,15,
+l_prism/2-gx_mij/2,y_prism1,15,
+0,y_prism1,15
+
+RETURN
+
+"contur profil U3":
+PUT 0,0,15,
+l_prism,0,15,
+l_prism,y_prism,15,
+l_prism-offx1,y_prism,15,
+l_prism-offx1,y_prism-g_profil,15,
+l_prism-g_profil,y_prism-g_profil,15,
+l_prism-g_profil,g_profil,15,
+l_prism/2+gx_mij/2,g_profil,15,
+l_prism/2+gx_mij/2,gy_mij,15,
+l_prism/2-gx_mij/2,gy_mij,15,
+l_prism/2-gx_mij/2,g_profil,15,
+g_profil,g_profil,15,
+g_profil,y_prism-g_profil,15,
+offx1,y_prism-g_profil,15,
+offx1,y_prism,15,
+0,y_prism,15
+
+RETURN
+
+"profil usa5 t":
+PUT -l_prism/2,0,15,
+-l_prism/2+0.026,0,15,
+-l_prism/2+0.026,0.015,15,
+l_prism/2-0.008,0.015,15,
+l_prism/2-0.008,0,15,
+l_prism/2,0,15,
+l_prism/2,y_prism,15,
+l_prism/2-0.006,y_prism,15,
+l_prism/2-0.006,y_prism-0.02,15,
+-l_prism/2+0.006,y_prism-0.02,15,
+-l_prism/2+0.006,y_prism,15,
+-l_prism/2,y_prism,15
+
+RETURN
+
+"profil usa6 t":
+PUT l_prism/2,0,15,
+l_prism/2-0.026,0,15,
+l_prism/2-0.026,0.015,15,
+-(l_prism/2-0.008),0.015,15,
+-(l_prism/2-0.008),0,15,
+-l_prism/2,0,15,
+-l_prism/2,y_prism,15,
+-0.03/2,y_prism,15,
+-0.03/2,y_prism+0.015,15,
+0.03/2,y_prism+0.015,15,
+0.03/2,y_prism,15,
+l_prism/2,y_prism,15
+
+RETURN
+
+"profil usa7 t":
+PUT l_prism/2,0,15,
+l_prism/2-0.008,0,15,
+l_prism/2-0.008,0.015,15,
+-l_prism/2+0.026,0.015,15,
+-l_prism/2+0.026,0,15,
+-l_prism/2,0,15,
+-l_prism/2,y_prism-0.02,15,
+-l_prism/2+0.005,y_prism-0.02,15,
+-l_prism/2+0.005,y_prism-0.03,15,
+-l_prism/2+0.006,y_prism-0.03,15,
+l_prism/2-0.006,y_prism-0.03,15,
+l_prism/2-0.006,y_prism,15,
+l_prism/2,y_prism,15
+
+RETURN
+
+"profil U":
+PUT 0,0,15,
+l_prism,0,15,
+l_prism,y_prism,15,
+l_prism-g_profil,y_prism,15,
+l_prism-g_profil,g_profil,15,
+g_profil,g_profil,15,
+g_profil,y_prism,15,
+0,y_prism,15
+
+prism_ nsp/3,g_prism,get(nsp)
+
+RETURN
+
+"handle":
+l_clanta=-0.02
+g1_clanta=0.02
+y_clanta=0.02
+h_clanta=0.02
+g2_clanta=0.005
+MATERIAL gs_frame_mat
+ADD y_profil_usa/2+0.03,x_profil_usa,0
+    GOSUB "handle_part"
+    ADDy -x_profil_usa
+        MULy -1
+            GOSUB "handle_part"
+        del 1
+    del 1
+del 1
+RETURN
+
+"handle_part":
+ADDx -0.015
+    BRICK 0.03, 0.005, 0.16 
+del 1
+ADD -g1_clanta/2,0.005,0.09
+    GOSUB "clanta"
+del 1
+ADD 0,0.005,0.02
+    ROTX -90
+        CYLIND 0.002, 0.005 
+    del 1
+del 1
+RETURN
+
+"clanta":
+BRICK g1_clanta, 0.006, h_clanta 
+ADDy 0.006
+    PUT 0,0,15,
+    g1_clanta,0,15,
+    g1_clanta,y_clanta-g2_clanta,15,
+    l_clanta,y_clanta-g2_clanta/3,15,
+    l_clanta,y_clanta,15,
+    0.002,y_clanta,15
+    
+    prism_ nsp/3,h_clanta,get(nsp)
+
+del 1
+RETURN
+

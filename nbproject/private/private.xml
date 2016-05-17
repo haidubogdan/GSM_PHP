@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/D:/Odesk/GSM_from_xml/PHP_project/index.php</file>
+            <file>file:/D:/Odesk/GSM_from_xml/PHP_project/app/controllers/home.php</file>
+            <file>file:/D:/Odesk/GSM_from_xml/PHP_project/SL60_gsm.txt</file>
+            <file>file:/D:/Odesk/GSM_from_xml/PHP_project/app/gsm3Dscript/SL60_3d_script_gsm.php</file>
+            <file>file:/D:/Odesk/GSM_from_xml/PHP_project/app/gsm/SL60_gsm.php</file>
+            <file>file:/D:/Odesk/GSM_from_xml/PHP_project/app/gsmParameters/SL60_3d_parameters_gsm.php</file>
+            <file>file:/D:/Odesk/GSM_from_xml/PHP_project/app/models/XmlMethods.php</file>
+            <file>file:/D:/Odesk/GSM_from_xml/PHP_project/app/models/GsmLanguage.php</file>
+            <file>file:/D:/Odesk/GSM_from_xml/PHP_project/app/models/GsmInterfaceLanguage.php</file>
+            <file>file:/D:/Odesk/GSM_from_xml/PHP_project/app/controllers/controller.php</file>
+            <file>file:/D:/Odesk/GSM_from_xml/PHP_project/app/models/temp_parameters.php</file>
+            <file>file:/D:/Odesk/GSM_from_xml/PHP_project/app/gsmInterface/SL60_interface_gsm.php</file>
+            <file>file:/D:/Odesk/GSM_from_xml/PHP_project/app/models/temp_change.php</file>
+            <file>file:/D:/Odesk/GSM_from_xml/PHP_project/app/controllers/base.php</file>
+        </group>
+    </open-files>
+</project-private>
